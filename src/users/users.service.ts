@@ -1,12 +1,9 @@
-import { HttpService } from '@nestjs/axios';
 import {
   ConflictException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { AxiosResponse } from 'axios';
-import { map } from 'rxjs/operators';
 import { CreateUserDto } from './dto/create-user.dto';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
@@ -18,8 +15,6 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-
-    private readonly httpService: HttpService,
   ) {}
 
   async create(createUserDto: CreateUserDto) {

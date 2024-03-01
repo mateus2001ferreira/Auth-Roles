@@ -1,8 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Roles } from './entities/user-role.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class UserRolesService {
@@ -10,11 +9,19 @@ export class UserRolesService {
     @InjectRepository(Roles)
     private readonly UserRoleRepository: Repository<Roles>,
   ) {}
-  findAll() {
-    return `This action returns all userRoles`;
+  async findAll() {
+    try {
+      return await this.UserRoleRepository.find();
+    } catch (error) {
+      throw new NotFoundException('Erro ao buscar permissões');
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} userRole`;
+  async findOne(id: number) {
+    try {
+      return await this.UserRoleRepository.findOneOrFail({ where: { id: id } });
+    } catch (error) {
+      throw new NotFoundException('Erro ao buscar permissão');
+    }
   }
 }
