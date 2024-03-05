@@ -11,13 +11,7 @@ import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { AuthRequest } from './models/AuthRequest';
 import { IsPublic } from './decorators/is-public.decorator';
-import {
-  ApiBody,
-  ApiOkResponse,
-  ApiOperation,
-  ApiTags,
-  ApiUnauthorizedResponse,
-} from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Autenticação')
 @Controller('auth')
@@ -25,7 +19,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @ApiOperation({ description: 'Login' })
-  @ApiBody({ type: typeof { email: '', password: '' } })
+  @ApiBody({ type: typeof { email: ' ', password: '' } })
   @IsPublic()
   @Post('/login')
   @HttpCode(HttpStatus.OK)
@@ -34,14 +28,14 @@ export class AuthController {
     return this.authService.login(req);
   }
 
-  @ApiOperation({ description: 'Logout: enviar bearer token' })
+  @ApiOperation({ description: 'Logout: Enviar bearer token' })
   @HttpCode(HttpStatus.OK)
   @Get('/logout')
   async logout(@Request() req: AuthRequest) {
     return await this.authService.logout(req);
   }
 
-  @ApiOperation({ description: 'Refresh: enviar bearer token' })
+  @ApiOperation({ description: 'Refresh: Enviar bearer token' })
   @IsPublic()
   @Post('/refresh')
   async refresh(@Request() req: AuthRequest) {

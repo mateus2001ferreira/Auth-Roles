@@ -7,6 +7,7 @@ import { User } from './entities/user.entity';
 import { Roles } from 'src/auth/user-roles/decorators/roles.decorator';
 import { UserRoles } from 'src/auth/auth/entities/user-roles';
 import { ApiExcludeEndpoint, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { updatePasswordDto } from './dto/update-password.dto';
 
 @ApiTags('Usuários')
 @Controller('users')
@@ -18,6 +19,15 @@ export class UsersController {
   @Post()
   async create(@Body() createUserDto: CreateUserDto) {
     return await this.usersService.create(createUserDto);
+  }
+
+  @ApiOperation({ description: 'Alterar a senha do usuário' })
+  @Post('update-password')
+  async updatePassword(
+    @CurrentUser() user: User,
+    @Body() updatePasswordDto: updatePasswordDto,
+  ) {
+    return await this.usersService.updatePassword(user, updatePasswordDto);
   }
 
   @ApiExcludeEndpoint()

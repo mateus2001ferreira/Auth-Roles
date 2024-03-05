@@ -76,13 +76,12 @@ export class AuthTokensService {
     }
 
     const user = await this.jwtService.decode(bearer_token);
-
     return {
       user: {
         id: user.sub,
         fullName: user.name,
         email: user.email,
-        rolesName: user.roles,
+        rolesName: user.rolesName,
       },
       headers: {
         'user-agent': platform,
@@ -90,9 +89,13 @@ export class AuthTokensService {
     };
   }
 
-  async remove(token: string) {
-    await this.authTokenRepository.delete({
-      bearer_token: token,
-    });
+  async remove(tokenOrId: string | number) {
+    if (typeof tokenOrId === 'string') {
+      await this.authTokenRepository.delete({
+        bearer_token: tokenOrId,
+      });
+    } else {
+      await this.authTokenRepository.delete({ userId: tokenOrId });
+    }
   }
 }

@@ -10,7 +10,6 @@ import { UserPayload } from './models/UserPayload';
 import { JwtService } from '@nestjs/jwt';
 import { UserToken } from './models/UserToken';
 import { AuthTokensService } from '../auth_tokens/auth_tokens.service';
-import { platform } from 'os';
 
 @Injectable()
 export class AuthService {

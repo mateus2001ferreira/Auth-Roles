@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   InternalServerErrorException,
@@ -9,12 +10,15 @@ import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
+import { updatePasswordDto } from './dto/update-password.dto';
+import { AuthTokensService } from 'src/auth/auth_tokens/auth_tokens.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private readonly authTokenService: AuthTokensService,
   ) {}
 
   async create(createUserDto: CreateUserDto) {
@@ -40,6 +44,62 @@ export class UsersService {
 
       return { ...newUser, password: undefined };
     } catch (error) {
+      if (error instanceof ConflictException) {
+        throw new ConflictException(error.message);
+      } else {
+        throw new InternalServerErrorException('Erro interno do servidor');
+      }
+    }
+  }
+
+  async updatePassword(reqUser: User, updatePasswordDto: updatePasswordDto) {
+    try {
+      if (
+        updatePasswordDto.newPassword != updatePasswordDto.repeatNewPassword
+      ) {
+        throw new BadRequestException(
+          'Nova senha e repetir nova senha precisam ser iguais',
+        );
+      }
+
+      const user = await this.userRepository.findOne({
+        where: { id: reqUser.id },
+      });
+
+      if (
+        (await bcrypt.compareSync(
+          updatePasswordDto.newPassword,
+          user.password,
+        )) == true
+      ) {
+        throw new ConflictException('Nova senha não pode ser igual a antiga');
+      }
+
+      if (
+        (await bcrypt.compareSync(updatePasswordDto.password, user.password)) ==
+        false
+      ) {
+        throw new ConflictException('Senha atual incorreta');
+      }
+
+      const newPassword = await bcrypt.hash(
+        updatePasswordDto.newPassword,
+        Number(process.env.SALT_ROUNDS),
+      );
+
+      await this.userRepository.update(user.id, {
+        password: newPassword,
+      });
+
+      if (updatePasswordDto.continueLogged == true) {
+        return { message: 'Senha alterada com sucesso', statusCode: 200 };
+      }
+
+      return await this.authTokenService.remove(user.id);
+    } catch (error) {
+      if (error instanceof BadRequestException) {
+        throw new BadRequestException(error.message);
+      }
       if (error instanceof ConflictException) {
         throw new ConflictException(error.message);
       } else {
