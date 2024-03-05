@@ -6,24 +6,29 @@ import { CurrentUser } from 'src/auth/auth/decorators/current-user.decorator';
 import { User } from './entities/user.entity';
 import { Roles } from 'src/auth/user-roles/decorators/roles.decorator';
 import { UserRoles } from 'src/auth/auth/entities/user-roles';
+import { ApiExcludeEndpoint, ApiOperation, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Usuários')
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @ApiOperation({ description: 'Adicionar usuário' })
   @IsPublic()
   @Post()
   async create(@Body() createUserDto: CreateUserDto) {
     return await this.usersService.create(createUserDto);
   }
 
+  @ApiExcludeEndpoint()
   @IsPublic()
   @Get('/findByEmail/:email')
   async findUserByEmail(@Param('email') email: string) {
     return await this.usersService.findUserByEmail(email);
   }
 
-  // @Roles(UserRoles.Admin, UserRoles.User)
+  @ApiExcludeEndpoint()
+  @Roles(UserRoles.Admin, UserRoles.User)
   @Get('/teste')
   teste(@CurrentUser() user: User) {
     return user;

@@ -1,16 +1,9 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Post, Body } from '@nestjs/common';
 import { AuthTokensService } from './auth_tokens.service';
 import { CreateAuthTokenDto } from './dto/create-auth_token.dto';
-import { UpdateAuthTokenDto } from './dto/update-auth_token.dto';
+import { ApiExcludeController } from '@nestjs/swagger';
 
+@ApiExcludeController()
 @Controller('auth-tokens')
 export class AuthTokensController {
   constructor(private readonly authTokensService: AuthTokensService) {}

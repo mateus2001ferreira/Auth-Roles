@@ -9,6 +9,7 @@ import { JwtAuthGuard } from './auth/auth/guards/jwt-auth.guard';
 import { RolesGuard } from './auth/user-roles/guards/roles.guard';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthTokensModule } from './auth/auth_tokens/auth_tokens.module';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 @Module({
   imports: [
