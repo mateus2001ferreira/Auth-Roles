@@ -1,5 +1,12 @@
-import { Roles } from 'src/user-roles/entities/user-role.entity';
-import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { AuthToken } from 'src/auth/auth_tokens/entities/auth_token.entity';
+import { Roles } from 'src/auth/user-roles/entities/user-role.entity';
+import {
+  Column,
+  Entity,
+  ManyToMany,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 export class User {
@@ -17,4 +24,7 @@ export class User {
 
   @ManyToMany(() => Roles)
   roles: Roles[];
+
+  @OneToMany(() => AuthToken, (token) => token.user)
+  tokenId: AuthToken[];
 }
