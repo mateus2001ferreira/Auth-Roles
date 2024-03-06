@@ -102,6 +102,7 @@ export class AuthService {
       if (!verify) {
         throw new UnauthorizedException('Token inválido');
       }
+
       return await this.login(verify);
     } catch (error) {
       throw new UnauthorizedException(error.message);

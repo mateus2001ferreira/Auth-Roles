@@ -81,7 +81,7 @@ export class AuthTokensService {
         id: user.sub,
         fullName: user.name,
         email: user.email,
-        rolesName: user.rolesName,
+        rolesName: user.roles,
       },
       headers: {
         'user-agent': platform,
